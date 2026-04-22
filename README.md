@@ -1,4 +1,4 @@
-# Orchestration Setups for OpenClaw + ACP Workers
+# Orchestrator a la oh-my-codex and gastown for Openclaw
 
 Goal: avoid making the main OpenClaw session a heavy execution runtime while keeping it as the control plane.
 
