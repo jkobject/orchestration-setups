@@ -39,6 +39,70 @@ So the safer design is:
 | **D. Hybrid ACP** | Claude Code planners/reviewers + Codex builders | Strongest team pattern for medium/large repos | More orchestration discipline needed | Larger engineering work |
 | **E. External-first swarm** | Very thin OpenClaw, most work done outside it | Maximum isolation from gateway quirks | Less unified state unless carefully documented | Big coding swarms, later phase |
 
+## Available orchestration workflows
+
+### `review-loop`
+Classic builder → reviewer → fix loop.
+
+Use it for:
+- non-trivial code changes
+- document or spec review
+- any task where you want a clean quality gate before shipping
+
+### `deep-research`
+Parallel research fan-out followed by synthesis.
+
+Use it for:
+- literature scans
+- competitive / technical landscape surveys
+- collecting evidence from several parallel workers before one synthesis pass
+
+### `project-builder`
+Structured project build flow with a planner/builder/reviewer pattern and worktree-aware module splitting.
+
+Use it for:
+- multi-file engineering tasks
+- greenfield feature scaffolding
+- work that benefits from parallel builder streams with explicit reviewer feedback
+
+### `batch-review`
+One reviewer pattern over a set of items/artifacts.
+
+Use it for:
+- many related diffs
+- content batches
+- repeated checks over a list of outputs
+
+### `watchdog`
+Lightweight monitoring / stale-run detection pattern.
+
+Use it for:
+- surfacing stalled runs
+- retry / escalation checks
+- lightweight operational monitoring
+
+## Validation status
+
+Not all workflows are validated at the same depth yet.
+
+| Workflow / backend | Validation level | Status |
+|---|---|---|
+| **OpenClaw subagent backend** | Real smoke test | ✅ validated |
+| **Claude Code ACP backend** | Real smoke test | ✅ validated |
+| **Codex ACP backend** | Real smoke test | ✅ validated |
+| **`review-loop`** | Runtime smoke test executed successfully | ✅ validated at V1 runtime level |
+| **`deep-research`** | Parallel handoff generation checked manually (`--count 3`) | 🟡 structure validated, not yet end-to-end on a full real case |
+| **`project-builder`** | Module-targeted handoff generation checked manually (`--targets backend,frontend`) | 🟡 structure validated, not yet end-to-end on a full real case |
+| **`batch-review`** | Present in pack, no dedicated smoke test yet | ⚪ not yet explicitly validated |
+| **`watchdog`** | Present in pack, no dedicated smoke test yet | ⚪ not yet explicitly validated |
+
+So the honest answer is:
+- **no, they are not all validated equally yet**
+- the **execution backends** are now validated
+- `review-loop` is the most concretely validated workflow
+- `deep-research` and `project-builder` are structurally validated but still deserve a real end-to-end run
+- `batch-review` and `watchdog` are packaged but still lighter-confidence
+
 ## Final recommendation
 
 ### Phase 1, adopt now
